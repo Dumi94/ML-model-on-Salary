@@ -1,0 +1,70 @@
+---
+title: "ML model on Salary"
+author: "Dumi Yambira"
+date: "2023-03-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Objective
+
+The dataset comprises years of experience in relation to salary.The objective is to use ML model of regression to predict estimated salary based on experience.The objective of this short project is to build an ML model based on simple linear regression and to demonstrate the skills in ML
+
+```{r load the data and library, echo=FALSE}
+#load the data
+datasalary = read.csv('Salary_Data.csv')
+
+#load the library
+library(caTools)
+library(ggplot2)
+
+```
+
+```{r data pre-processing, echo=FALSE}
+#Pre-process the data
+set.seed(123)
+
+datasplit = sample.split(datasalary$Salary, SplitRatio = 0.7) # dependent variable
+
+train.data = subset(datasalary, datasplit == TRUE)
+test.data = subset(datasalary, datasplit == FALSE)
+```
+
+```{r data modelling, echo=FALSE}
+#Data modelling stage
+#regression for training set
+regressor = lm(formula = Salary ~ YearsExperience, data = train.data)
+
+#predict function for test set
+data.predict = predict(regressor, newdata = test.data)
+
+```
+
+## Data Visualisation
+
+```{r data evaluation, echo=FALSE}
+#evaluate through visualization
+ggplot() +
+  geom_point(aes(x = train.data$YearsExperience, y = train.data$Salary),
+             color = 'red') +
+  geom_line(aes(x = train.data$YearsExperience, y = predict(regressor, newdata = train.data)),
+             color = 'blue') +
+  ggtitle('Salary based on Years of Experience(Training set)') +
+  xlab('Years of Experience') +
+  ylab('Salary')
+
+```
+
+## Mean Squared Error
+
+```{r accuracy assessment, echo=FALSE}
+#Assess the accuracy
+mean((regressor$residuals^2)/10000000)
+```
+
+# Conclusion
+
+Using the ML model of simple regression, Years of experience in work highly influence the amount of Salary paid. Hence we can predict that more years of experience result in a higher salary in a workplace. MSE (Mean Squared Error) of 2.5 indicates that this model can highly predict the outcome of the actual data and this model can be both valid and reliable in using years of experience as a factor in predicting one\`s salary.
